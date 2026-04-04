@@ -26,16 +26,23 @@ Pluteus is a private knowledge management tool built for developers. It organize
 ## Running Pluteus
 
 1. Download `pluteus.exe` from [Releases](../../releases)
-2. Place it anywhere and run it:
-   ```
-   pluteus.exe
-   ```
+2. Place it anywhere and run it
 3. Open `http://localhost:8080` in your browser
 4. Complete the first-run setup to create your admin account
 5. Optional: if simply testing, you can turn on the test data generation
 6. Check the `Help` section to find tips, Mardown syntax cheat sheet, and glyph browser
 
 That's it. A `pluteus.db` and supportive files are created in the same directory on first run.
+
+---
+
+## VirusTotal Report
+
+_Check the [VirusTotal report here](https://www.virustotal.com/gui/file-analysis/YTVlMDhiZWM2Y2EzMWFiMGNhMjUyYmVlZDg3NjhjOWY6MTc3NTI5NDM5MA==)_
+
+*MaxSecure* has lovingly dinged Pluteus with a false-positive for "_Trojan.Malware.300983.susgen_". This alarmed me initially, because the release here is generated from a GitHub action from the private repository - no "human" hands touch the release output. I did research on this, and it turns out *MaxSecure* is notorious for being the odd one in the bunch that flags many files with this, including old CD-ROM game files from 1999! Feel free to dive and throw the Pluteus executable at anything else; I just wanted to point this out and share it.
+
+It's worth a bit of research if you're a developer yourself, as this sort of thing could very well pop up for you as well. When trying to assure your users, point out that while the initial list of AV checks is great for at-a-glance (_and where most users stop_), the "Details" and "Behavior" tabs are where the real details are at, with the Behavior section being the most important in my opinion.
 
 ---
 

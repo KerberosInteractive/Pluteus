@@ -44,6 +44,8 @@ _Check the [VirusTotal report here](https://www.virustotal.com/gui/file-analysis
 
 It's worth a bit of research if you're a developer yourself, as this sort of thing could very well pop up for you as well. When trying to assure your users, point out that while the initial list of AV checks is great for at-a-glance (_and where most users stop_), the "Details" and "Behavior" tabs are where the real details are at, with the Behavior section being the most important in my opinion.
 
+Other elements on the Behavior tab of the report worth calling out the "_Memory Pattern Domains_"; there are some odd URLs there and in other places that seenm to have no place being in Pluteus! The reason they show up is simple: those are various links and information contained within the test seed data. During the initial setup of Pluteus, users have the option of enabling demo/sample data generation, in the event they want to quickly see how a more mature content library would look. Nothing nefarious, though this was another waving red flag that alarmed me when I was doing a security audit. I wasted far too much time investigating this stuff, because I had forgotten about the demo data!
+
 ---
 
 ## Configuration

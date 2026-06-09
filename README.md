@@ -1,84 +1,159 @@
+<div align="center">
+
 # Pluteus
 
-A self-hosted knowledge base built in Go. Organized by project with Markdown doc pages, plain-text notes, code snippets, and bookmarks: cross-referenced, tagged, and full-text searchable. Single binary, SQLite, no JavaScript framework.
+**A fast, single-binary knowledge base. Your docs, notes, snippets, and links: organized by project, cross-referenced, tagged, and instantly searchable.**
+
+[![Latest release](https://img.shields.io/github/v/release/KerberosInteractive/Pluteus?label=release&sort=semver)](../../releases/latest)
+[![License](https://img.shields.io/github/license/KerberosInteractive/Pluteus)](LICENSE)
+![Platform](https://img.shields.io/badge/platform-Windows%20x64-informational)
+
+![Pluteus dashboard](assets/hero-dashboard.png)
+
+</div>
 
 ---
 
-![Pluteus Preview Shot](./assets/Shot_A.png)
+## What is Pluteus
 
-## What it is
+A *pluteus* was the Roman reading desk: a plain, sturdy surface that held your work where you could see it and reach it. Pluteus is that idea in software, a focused, fast knowledge base you run and own.
 
-Pluteus is a private knowledge management tool built for developers. It organizes your work into **projects**, each containing docs, notes, snippets, and bookmarked links. All the content items are cross-referenceable and full-text searchable.
+It ships as a **single binary** with a **single data file**. It starts instantly, has no accounts and no cloud, and stays out of your way. Your knowledge lives in one SQLite file you can copy to back up or move, and nothing leaves your machine unless you decide it should.
 
-**Content types:**
-- **Docs**: Markdown pages with a tree structure, breadcrumb navigation, and cross-references
-- **Notes**: Quick plain-text captures, pinnable
-- **Snippets**: Syntax-highlighted code blocks with language tagging
-- **Links**: External bookmarks with descriptions and tags
-
-**Cross-reference syntax** (inside any doc):
-- `[[doc:slug]]` / `[[note:id]]` / `[[snippet:id]]` : inline link with hover preview
-- `![[note:id]]` / `![[snippet:id]]` : embed content inline
-- Full-text search across all content types
+Everything you create lives inside a **Project**. Anything that doesn't belong to a specific project lives in **Global**, the project that's always there.
 
 ---
 
-## Running Pluteus
+## Features
 
-1. Download `pluteus.exe` from [Releases](../../releases)
-2. Place it anywhere and run it
-3. Open `http://localhost:8080` in your browser
-4. Complete the first-run setup to create your admin account
-5. Optional: if simply testing, you can turn on the test data generation
-6. Check the `Help` section to find tips, Mardown syntax cheat sheet, and glyph browser
+- **Four content types, one home** - Markdown **docs**, plain-text **notes**, language-tagged code **snippets**, and saved **links**, all grouped by project.
+- **Cross-references and embeds** - link to or pull in any content from inside a doc with `[[type:id]]` syntax, complete with hover-card previews.
+- **Backlinks** - every page shows what references it; the graph builds itself as you write.
+- **Full-text search** - SQLite FTS5 across every content type, with ranked, highlighted results.
+- **Tags** - one tagging system across all content, with autocomplete and tag browsing.
+- **Task boards** - a per-project kanban with drag-and-drop, no page reloads.
+- **Images** - upload once, embed anywhere in a doc with a single tag.
+- **Dark and light themes** - switch from the nav bar.
+- **App-like launch** - opens your browser on start, refuses to run twice, and (on Windows) offers an optional system-tray icon with a windowless mode.
+- **Yours to run** - local-first, no telemetry, no subscription. One file is your whole knowledge base.
 
-That's it. A `pluteus.db` and supportive files are created in the same directory on first run.
+Prefer a brighter workspace? A light theme ships alongside the dark default, switchable from the nav bar.
+
+![Light theme](assets/theme-light.png)
 
 ---
 
-## VirusTotal Report
+## Setup
 
-_Check the [VirusTotal report here](https://www.virustotal.com/gui/file-analysis/YTVlMDhiZWM2Y2EzMWFiMGNhMjUyYmVlZDg3NjhjOWY6MTc3NTI5NDM5MA==)_
+1. Download `pluteus.exe` from the [latest release](../../releases/latest).
+2. Put it anywhere and run it:
+   ```
+   pluteus.exe
+   ```
+3. Open `http://localhost:8080` in your browser.
+4. Create your admin account on the first-run setup screen. Tick **Generate test data** if you just want to explore a populated instance.
 
-*MaxSecure* has lovingly dinged Pluteus with a false-positive for "_Trojan.Malware.300983.susgen_". This alarmed me initially, because the release here is generated from a GitHub action from the private repository - no "human" hands touch the release output. I did research on this, and it turns out *MaxSecure* is notorious for being the odd one in the bunch that flags many files with this, including old CD-ROM game files from 1999! Feel free to dive and throw the Pluteus executable at anything else; I just wanted to point this out and share it.
+![First-run setup](assets/setup.png)
 
-It's worth a bit of research if you're a developer yourself, as this sort of thing could very well pop up for you as well. When trying to assure your users, point out that while the initial list of AV checks is great for at-a-glance (_and where most users stop_), the "Details" and "Behavior" tabs are where the real details are at, with the Behavior section being the most important in my opinion.
+A `pluteus.db` and its support files are created next to the executable on first run. That database **is** your knowledge base: copy it to back up or move everything.
 
-Other elements on the Behavior tab of the report worth calling out the "_Memory Pattern Domains_"; there are some odd URLs there and in other places that seenm to have no place being in Pluteus! The reason they show up is simple: those are various links and information contained within the test seed data. During the initial setup of Pluteus, users have the option of enabling demo/sample data generation, in the event they want to quickly see how a more mature content library would look. Nothing nefarious, though this was another waving red flag that alarmed me when I was doing a security audit. I wasted far too much time investigating this stuff, because I had forgotten about the demo data!
+By default Pluteus opens your browser on launch and won't start a second instance. On Windows you can run it windowless with an optional system-tray icon (Open / Exit) by setting `tray` in the config below.
 
 ---
 
 ## Configuration
 
-Pluteus is configured via environment variables. No config file needed.
+A `pluteus.json` file sits next to the executable. Defaults are written on first run. Environment variables override the file when set.
 
-| Variable | Default | Description |
+```json
+{
+  "port": "8080",
+  "db_path": "./pluteus.db",
+  "uploads_path": "./uploads",
+  "open_browser": true,
+  "tray": false
+}
+```
+
+| File key | Env override | Default |
 |---|---|---|
-| `PLUTEUS_PORT` | `8080` | HTTP server port |
-| `PLUTEUS_DB_PATH` | `./pluteus.db` | Path to the SQLite database file |
+| `port` | `PLUTEUS_PORT` | `8080` |
+| `db_path` | `PLUTEUS_DB_PATH` | `./pluteus.db` |
+| `uploads_path` | `PLUTEUS_UPLOADS_PATH` | `./uploads` |
+| `open_browser` | `PLUTEUS_OPEN_BROWSER` | `true` |
+| `tray` | `PLUTEUS_TRAY` | `false` |
 
-Example:
-```
-PLUTEUS_PORT=9000 PLUTEUS_DB_PATH=D:\data\pluteus.db pluteus.exe
-```
-
----
-
-## Requirements
-
-- Windows x64
-- A modern browser
-
-No installation, no runtime, no external services.
+Relative `db_path` / `uploads_path` values resolve against the executable's directory, so a double-clicked binary always keeps its data beside itself.
 
 ---
 
-## Planned Features
+## Using Pluteus
 
-- Linux/Mac support
-- Images!
-- Video embedding (_YouTube, Vimeo, etc_)
-- 
+### Start with a project
+
+Projects are the containers that give your content a home. Create one with a name, an optional description, a status, and an optional GitHub URL. Anything you don't file under a project lands in **Global**.
+
+![New project form](assets/new-project.png)
+
+A project page gathers everything: stat cards for each content type, a task-board preview, and a recent-activity feed.
+
+![Project page](assets/project-board.png)
+
+### Write docs
+
+Docs are the backbone. They're Markdown pages organized in a tree with breadcrumb navigation, and they're the connective tissue of Pluteus: docs are the only place cross-references and embeds originate. The editor renders a **live preview** beside your Markdown as you type.
+
+![Doc editor with live preview](assets/editor-preview.png)
+
+### Link and embed with cross-references
+
+Inside any doc, point at or pull in other content:
+
+| Syntax | Does |
+|---|---|
+| `[[doc:slug]]` `[[note:id]]` `[[snippet:id]]` `[[link:id]]` `[[project:slug]]` | Inline link with a hover-card preview |
+| `![[note:id]]` `![[snippet:id]]` `![[img:filename]]` | Embed the content inline |
+| `[[glyph:name]]` | Inline icon. Size it up with `[[glyph:name-2x]]` or `[[glyph:name-4x]]` |
+
+Hover any cross-reference link to preview the target without leaving the page.
+
+![Cross-reference hover card](assets/doc-crossref.png)
+
+### Notes, snippets, and links
+
+- **Notes** are short plain-text captures, quick to write and pinnable.
+- **Snippets** are language-tagged code blocks with syntax highlighting and one-click copy.
+- **Links** are saved URLs with a title, description, category, and tags.
+
+### Images
+
+Upload an image once, then embed it in any doc with `![[img:filename]]`. Images are supporting media for your docs, managed from the image library.
+
+### Find anything: search and tags
+
+Full-text search covers every content type and highlights matches; filter results by type with the tabs. Tags work across all content, with autocomplete on entry and a browse page to pivot by tag.
+
+![Search results](assets/search.png)
+
+### Track work on the task board
+
+Every project has a kanban board with TODO / In Progress / Done columns and drag-and-drop between them. Moves update in place, with no page reload.
+
+![Task board](assets/task-board.png)
+
+### Tips
+
+- **Glyphs** are inline icons via `[[glyph:name]]`. Browse and copy them from the in-app **Help → Glyphs** page.
+- **Themes** switch instantly from the nav bar; your choice is remembered.
+- **Pin** important notes to float them to the top of the list.
+- **Global** is the always-present project for anything that doesn't belong elsewhere; reach it from the top nav.
+- The in-app **Help** section has a full Markdown reference and a glyph browser - the authoritative cheat sheet lives there, not in this README.
+
+---
+
+## Roadmap
+
+- Linux and macOS builds
 
 ---
 
@@ -94,4 +169,4 @@ No installation, no runtime, no external services.
 
 ## License
 
-GNU General Public License v3.0
+GNU General Public License v3.0. See [LICENSE](LICENSE).
